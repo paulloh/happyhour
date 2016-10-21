@@ -27,8 +27,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Nome"
-            android:textSize="20sp"
-
             android:id="@+id/textView7" />
 
         <EditText
@@ -40,20 +38,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="E-mail"
-            android:textSize="20sp"
             android:id="@+id/textView4"
             android:layout_weight="0" />
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/editText3" />
+            android:id="@+id/email2" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Senha"
-            android:textSize="20sp"
             android:id="@+id/textView5" />
 
         <EditText
@@ -61,13 +57,12 @@
             android:layout_height="wrap_content"
             android:inputType="textPassword"
             android:ems="10"
-            android:id="@+id/editText4" />
+            android:id="@+id/password2" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Confirmar Senha"
-            android:textSize="20sp"
             android:id="@+id/textView6" />
 
         <EditText
