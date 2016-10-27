@@ -79,7 +79,8 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="23dp">
+        android:layout_marginBottom="23dp"
+        android:paddingTop="20dp">
 
         <Button
             android:layout_width="match_parent"
