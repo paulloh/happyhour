@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Happy Hour</string>
+    <string name="requiredEmail">O campo e-mail é obrgatório</string>
+    <string name="requiredPassword">O campo senha é obrgatório</string>
+    <string name="auth_failed">Não foi possível realizar o cadastro</string>
+    <string name="sign_up_success">Cadastro realizado com sucesso!</string>
 </resources>
