@@ -1,5 +1,6 @@
 package com.paulo.android.happyhour.activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -23,6 +24,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private EditText email;
     private EditText senha;
+    private ProgressDialog dialog;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -52,6 +54,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(!task.isSuccessful()){
                             Toast.makeText(LoginActivity.this, "Usuário ou senha inválidos!", Toast.LENGTH_LONG).show();
+                            dialog.cancel();
                         }else{
                             FirebaseUser user = task.getResult().getUser();
                             if (user != null){
@@ -99,10 +102,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         int i = v.getId();
         if (i == R.id.entrar) {
             login(email.getText().toString(), senha.getText().toString());
-            finish();
+            if(validateForm()) {
+                dialog = ProgressDialog.show(LoginActivity.this, "Happy Hour", "Realizando login aguarde...", false, true);
+                dialog.setCancelable(false);
+            }
         }else if(i == R.id.cadastrar){
             realizarCadastro();
-            finish();
         }
     }
 }

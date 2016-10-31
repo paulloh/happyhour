@@ -3,6 +3,7 @@ package com.paulo.android.happyhour;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -28,6 +29,7 @@ public class Cadastro extends AppCompatActivity implements View.OnClickListener 
     private EditText email;
     private EditText senha;
     private EditText senha2;
+    private ProgressDialog dialog;
 
     private DatabaseReference mDataBase;
     private FirebaseAuth mAuth;
@@ -75,6 +77,7 @@ public class Cadastro extends AppCompatActivity implements View.OnClickListener 
                         if (!task.isSuccessful()) {
                             Toast.makeText(Cadastro.this, R.string.auth_failed,
                                     Toast.LENGTH_SHORT).show();
+                            dialog.cancel();
                         }else{
                             Toast.makeText(Cadastro.this, R.string.sign_up_success,
                                     Toast.LENGTH_SHORT).show();
@@ -115,7 +118,7 @@ public class Cadastro extends AppCompatActivity implements View.OnClickListener 
         }
 
         if (!TextUtils.equals(password, confirmPass)){
-            senha2.setError("As senhas digitadas não são iguais!");
+            senha2.setError("As senhas digitadas não coincidem!");
             valid = false;
         }
         return valid;
@@ -141,7 +144,10 @@ public class Cadastro extends AppCompatActivity implements View.OnClickListener 
         int i = v.getId();
         if (i == R.id.cadastrar2) {
             createAccount(email.getText().toString(), senha.getText().toString());
-            finish();
+            if(validateForm()) {
+                dialog = ProgressDialog.show(Cadastro.this, "Happy Hour", "Realizando cadastro, aguarde...", false, true);
+                dialog.setCancelable(false);
+            }
         }else if(i == R.id.cancelar){
             finish();
         }
