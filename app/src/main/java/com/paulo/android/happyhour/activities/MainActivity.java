@@ -1,7 +1,9 @@
-package com.paulo.android.happyhour;
+package com.paulo.android.happyhour.activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.paulo.android.happyhour.R;
 
 public class MainActivity extends AppCompatActivity {
 
