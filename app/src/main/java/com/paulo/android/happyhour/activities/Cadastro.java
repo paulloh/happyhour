@@ -111,7 +111,7 @@ public class Cadastro extends AppCompatActivity implements View.OnClickListener 
         } else {
             senha.setError(null);
         }
-
+   
         if(TextUtils.isEmpty(confirmPass)){
             senha2.setError("Favor confirmar senha digitada.");
             valid = false;
