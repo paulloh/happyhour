@@ -82,6 +82,7 @@ public class Cadastro extends AppCompatActivity implements View.OnClickListener 
                             Toast.makeText(Cadastro.this, R.string.sign_up_success,
                                     Toast.LENGTH_SHORT).show();
                             Intent inte = new Intent(Cadastro.this, MainActivity.class);
+                            dialog.dismiss();
                             startActivity(inte);
                             createNotification();
                             finish();
@@ -130,7 +131,7 @@ public class Cadastro extends AppCompatActivity implements View.OnClickListener 
 
         Notification noti = new Notification.Builder(this).setContentTitle("Cadastro realizado com sucesso")
                 .setContentText("Bem Vindo ao HAPPY HOUR!")
-                .setSmallIcon(R.drawable.common_google_signin_btn_icon_light)
+                .setSmallIcon(R.drawable.happyhourlogo)
                 .build();
 
         NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);

@@ -56,6 +56,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             FirebaseUser user = task.getResult().getUser();
                             if (user != null){
                                 Intent it = new Intent(LoginActivity.this, MainActivity.class);
+                                dialog.dismiss();
                                 startActivity(it);
                                 finish();
                             }
