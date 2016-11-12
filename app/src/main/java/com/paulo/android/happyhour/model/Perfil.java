@@ -10,13 +10,13 @@ public class Perfil {
     private Integer uf;
     private String email;
     private String password;
-    private Byte picture;
+    private String picture;
 
-    public Byte getPicture() {
+    public String getPicture() {
         return picture;
     }
 
-    public void setPicture(Byte picture) {
+    public void setPicture(String picture) {
         this.picture = picture;
     }
 

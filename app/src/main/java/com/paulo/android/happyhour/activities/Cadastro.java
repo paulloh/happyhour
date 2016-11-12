@@ -4,16 +4,27 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -21,15 +32,22 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.paulo.android.happyhour.R;
+import com.paulo.android.happyhour.model.Perfil;
+
+import java.io.ByteArrayOutputStream;
 
 public class Cadastro extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = "EmailPassword";
+    final private int GALERY = 1;
+    final private int CAPTURE_IMAGE = 2;
+    private ImageView imageView;
 
     private EditText email;
     private EditText senha;
     private EditText senha2;
     private ProgressDialog dialog;
+    private Perfil userPerfil;
 
     private DatabaseReference mDataBase;
     private FirebaseAuth mAuth;
@@ -44,9 +62,11 @@ public class Cadastro extends AppCompatActivity implements View.OnClickListener 
          email = (EditText) findViewById(R.id.email2);
          senha = (EditText) findViewById(R.id.password2);
          senha2 = (EditText) findViewById(R.id.confirmPass);
+         imageView = (ImageView) findViewById(R.id.loadImg);
 
         findViewById(R.id.cadastrar2).setOnClickListener(this);
         findViewById(R.id.cancelar).setOnClickListener(this);
+        findViewById(R.id.loadImg).setOnClickListener(this);
 
         final String resultEmail = getIntent().getStringExtra("Email");
         final String resultPassword = getIntent().getStringExtra("Password");
@@ -93,7 +113,89 @@ public class Cadastro extends AppCompatActivity implements View.OnClickListener 
         // [END create_user_with_email]
         }
 
-    private boolean validateForm() {
+    private void selecionarImagem(){
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(Cadastro.this);
+        builder.setMessage("Selecionar a imagem do Perfil:")
+                .setPositiveButton("Camera", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        //camera intent
+                        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        startActivityForResult(takePictureIntent, CAPTURE_IMAGE);
+                    }
+                })
+                .setNegativeButton("Galeria", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Intent intent = new Intent();
+                        intent.setType("image/*");
+                        intent.setAction(Intent.ACTION_GET_CONTENT);
+                        startActivityForResult(Intent.createChooser(intent, "Selecione uma imagem"), GALERY);
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
+
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == CAPTURE_IMAGE) {
+            if (resultCode == RESULT_OK) {
+                Glide.with(Cadastro.this)
+                        .load(data.getData())
+                        .asBitmap()
+                        .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                        .centerCrop()
+                        .error(R.drawable.img)
+                        //.placeholder(R.drawable.default_user_gray)
+                        .into(new BitmapImageViewTarget(imageView) {
+                            @Override
+                            protected void setResource(Bitmap resource) {
+                                RoundedBitmapDrawable circularBitmapDrawable =
+                                        RoundedBitmapDrawableFactory.create(Cadastro.this.getResources(), resource);
+                                circularBitmapDrawable.setCircular(true);
+                                imageView.setImageDrawable(circularBitmapDrawable);
+
+                                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                                resource.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+                                byte[] byteArray = byteArrayOutputStream.toByteArray();
+                                String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
+                                userPerfil.setPicture(encoded);
+                            }
+
+
+                        });
+            }
+        }
+        if (requestCode == GALERY) {
+            if (resultCode == RESULT_OK) {
+                Glide.with(Cadastro.this)
+                        .load(data.getData())
+                        .asBitmap()
+                        .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                        .centerCrop()
+                        .error(R.drawable.img)
+                        //.placeholder(R.drawable.default_user_gray)
+                        .into(new BitmapImageViewTarget(imageView) {
+                            @Override
+                            protected void setResource(Bitmap resource) {
+                                RoundedBitmapDrawable circularBitmapDrawable =
+                                        RoundedBitmapDrawableFactory.create(Cadastro.this.getResources(), resource);
+                                circularBitmapDrawable.setCircular(true);
+                                imageView.setImageDrawable(circularBitmapDrawable);
+
+                                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                                resource.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+                                byte[] byteArray = byteArrayOutputStream.toByteArray();
+                                String encodedGalery = Base64.encodeToString(byteArray, Base64.DEFAULT);
+
+                            }
+
+                        });
+            }
+        }
+    }
+
+        private boolean validateForm() {
         boolean valid = true;
 
         String mail = email.getText().toString();
@@ -151,6 +253,8 @@ public class Cadastro extends AppCompatActivity implements View.OnClickListener 
             }
         }else if(i == R.id.cancelar){
             finish();
+        }else if (i == R.id.loadImg){
+            selecionarImagem();
         }
     }
 
