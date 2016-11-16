@@ -5,12 +5,39 @@ package com.paulo.android.happyhour.model;
  */
 public class Perfil {
 
+    public Perfil(){
+
+    }
+    public Perfil(String name, String dataNasc, String email) {
+        this.name = name;
+        this.dataNasc = dataNasc;
+        this.email = email;
+    }
+
+    private String id;
     private String name;
+    private String dataNasc;
     private String city;
     private Integer uf;
     private String email;
     private String password;
     private String picture;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getDataNasc() {
+        return dataNasc;
+    }
+
+    public void setDataNasc(String dataNasc) {
+        this.dataNasc = dataNasc;
+    }
 
     public String getPicture() {
         return picture;
@@ -59,4 +86,5 @@ public class Perfil {
     public void setPassword(String password) {
         this.password = password;
     }
+
 }

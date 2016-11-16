@@ -29,6 +29,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.paulo.android.happyhour.R;
@@ -43,6 +44,8 @@ public class Cadastro extends AppCompatActivity implements View.OnClickListener 
     final private int CAPTURE_IMAGE = 2;
     private ImageView imageView;
 
+    private EditText nome;
+    private EditText dataNasc;
     private EditText email;
     private EditText senha;
     private EditText senha2;
@@ -59,8 +62,11 @@ public class Cadastro extends AppCompatActivity implements View.OnClickListener 
 
         mDataBase = FirebaseDatabase.getInstance().getReference();
 
-         email = (EditText) findViewById(R.id.email2);
-         senha = (EditText) findViewById(R.id.password2);
+         nome     = (EditText) findViewById(R.id.name);
+         dataNasc = (EditText) findViewById(R.id.date);
+         email    = (EditText) findViewById(R.id.email);
+         senha    = (EditText) findViewById(R.id.password);
+
          senha2 = (EditText) findViewById(R.id.confirmPass);
          imageView = (ImageView) findViewById(R.id.loadImg);
 
@@ -95,24 +101,39 @@ public class Cadastro extends AppCompatActivity implements View.OnClickListener 
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
+                            task.getResult().getUser();
                             Toast.makeText(Cadastro.this, R.string.auth_failed,
                                     Toast.LENGTH_SHORT).show();
                             dialog.cancel();
                         }else{
-                            Toast.makeText(Cadastro.this, R.string.sign_up_success,
-                                    Toast.LENGTH_SHORT).show();
-                            Intent inte = new Intent(Cadastro.this, MainActivity.class);
-                            dialog.dismiss();
-                            startActivity(inte);
-                            createNotification();
-                            finish();
+                            onAuthSuccess(task.getResult().getUser());
                         }
 
                     }
                 });
-        // [END create_user_with_email]
         }
 
+    private void onAuthSuccess(FirebaseUser user) {
+        initUser();
+
+        // Write new user
+        writeNewUser(user.getUid(), userPerfil.getName(), userPerfil.getDataNasc(), userPerfil.getEmail());
+
+        Toast.makeText(Cadastro.this, R.string.sign_up_success,
+                Toast.LENGTH_SHORT).show();
+        Intent inte = new Intent(Cadastro.this, MainActivity.class);
+        dialog.dismiss();
+        startActivity(inte);
+        createNotification();
+        finish();
+
+    }
+    private void writeNewUser(String userId, String name, String dataNasc, String email) {
+
+        Perfil user = new Perfil(name, dataNasc, email);
+
+        mDataBase.child("users").child(userId).setValue(user);
+    }
     private void selecionarImagem(){
 
         AlertDialog.Builder builder = new AlertDialog.Builder(Cadastro.this);
@@ -145,7 +166,7 @@ public class Cadastro extends AppCompatActivity implements View.OnClickListener 
                         .asBitmap()
                         .diskCacheStrategy(DiskCacheStrategy.RESULT)
                         .centerCrop()
-                        .error(R.drawable.img)
+                        .error(R.drawable.happyhourlogo)
                         //.placeholder(R.drawable.default_user_gray)
                         .into(new BitmapImageViewTarget(imageView) {
                             @Override
@@ -242,6 +263,13 @@ public class Cadastro extends AppCompatActivity implements View.OnClickListener 
 
     }
 
+    public void initUser(){
+        userPerfil = new Perfil();
+
+        userPerfil.setEmail   ( email.getText().toString());
+        userPerfil.setName    ( nome.getText().toString());
+        userPerfil.setDataNasc( dataNasc.getText().toString());
+    }
     @Override
     public void onClick(View v) {
         int i = v.getId();
