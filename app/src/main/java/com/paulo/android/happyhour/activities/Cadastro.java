@@ -51,6 +51,7 @@ public class Cadastro extends AppCompatActivity implements View.OnClickListener 
     private EditText senha2;
     private ProgressDialog dialog;
     private Perfil userPerfil;
+    private String picture;
 
     private DatabaseReference mDataBase;
     private FirebaseAuth mAuth;
@@ -115,9 +116,8 @@ public class Cadastro extends AppCompatActivity implements View.OnClickListener 
 
     private void onAuthSuccess(FirebaseUser user) {
         initUser();
-
         // Write new user
-        writeNewUser(user.getUid(), userPerfil.getName(), userPerfil.getDataNasc(), userPerfil.getEmail());
+        writeNewUser(user.getUid(), userPerfil.getName(), userPerfil.getDataNasc(), userPerfil.getEmail(), userPerfil.getPicture());
 
         Toast.makeText(Cadastro.this, R.string.sign_up_success,
                 Toast.LENGTH_SHORT).show();
@@ -128,9 +128,9 @@ public class Cadastro extends AppCompatActivity implements View.OnClickListener 
         finish();
 
     }
-    private void writeNewUser(String userId, String name, String dataNasc, String email) {
+    private void writeNewUser(String userId, String name, String dataNasc, String email, String picture) {
 
-        Perfil user = new Perfil(name, dataNasc, email);
+        Perfil user = new Perfil(name, dataNasc, email, picture);
 
         mDataBase.child("users").child(userId).setValue(user);
     }
@@ -208,7 +208,7 @@ public class Cadastro extends AppCompatActivity implements View.OnClickListener 
                                 resource.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
                                 byte[] byteArray = byteArrayOutputStream.toByteArray();
                                 String encodedGalery = Base64.encodeToString(byteArray, Base64.DEFAULT);
-
+                                picture = encodedGalery;
                             }
 
                         });
@@ -269,6 +269,7 @@ public class Cadastro extends AppCompatActivity implements View.OnClickListener 
         userPerfil.setEmail   ( email.getText().toString());
         userPerfil.setName    ( nome.getText().toString());
         userPerfil.setDataNasc( dataNasc.getText().toString());
+        userPerfil.setPicture(picture);
     }
     @Override
     public void onClick(View v) {

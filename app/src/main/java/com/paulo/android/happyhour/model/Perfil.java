@@ -8,10 +8,11 @@ public class Perfil {
     public Perfil(){
 
     }
-    public Perfil(String name, String dataNasc, String email) {
+    public Perfil(String name, String dataNasc, String email, String picture) {
         this.name = name;
         this.dataNasc = dataNasc;
         this.email = email;
+        this.picture = picture;
     }
 
     private String id;
