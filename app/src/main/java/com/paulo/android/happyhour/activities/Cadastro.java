@@ -161,10 +161,17 @@ public class Cadastro extends AppCompatActivity implements View.OnClickListener 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CAPTURE_IMAGE) {
             if (resultCode == RESULT_OK) {
+                Bundle extras = data.getExtras();
+                Bitmap imageBitmap = (Bitmap) extras.get("data");
+
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                byte[] byteArray = stream.toByteArray();
+
                 Glide.with(Cadastro.this)
-                        .load(data.getData())
+                        .load(byteArray)
                         .asBitmap()
-                        .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                        //.diskCacheStrategy(DiskCacheStrategy.RESULT)
                         .centerCrop()
                         .error(R.drawable.happyhourlogo)
                         //.placeholder(R.drawable.default_user_gray)
@@ -180,12 +187,13 @@ public class Cadastro extends AppCompatActivity implements View.OnClickListener 
                                 resource.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
                                 byte[] byteArray = byteArrayOutputStream.toByteArray();
                                 String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
-                                userPerfil.setPicture(encoded);
+                                picture = encoded;
                             }
 
 
                         });
             }
+
         }
         if (requestCode == GALERY) {
             if (resultCode == RESULT_OK) {
@@ -224,8 +232,8 @@ public class Cadastro extends AppCompatActivity implements View.OnClickListener 
             email.setError("O campo E-mail é obrigatório.");
             valid = false;
         } else {
-            email.setError(null);
         }
+            email.setError(null);
 
         String password = senha.getText().toString();
         String confirmPass = senha2.getText().toString();
